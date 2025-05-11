@@ -6,6 +6,7 @@ from datetime import datetime
 from tkinter import HORIZONTAL, ttk
 import os
 
+
 tia = None
 
 class tia_connect(tk.Tk):
