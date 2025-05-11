@@ -1,0 +1,2 @@
+pythonnet==3.0.2
+schedule==1.2.1
