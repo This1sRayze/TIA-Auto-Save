@@ -6,7 +6,6 @@ from datetime import datetime
 from tkinter import HORIZONTAL, ttk
 import os
 
-# Placeholder for TIA import, will be loaded dynamically
 tia = None
 
 class tia_connect(tk.Tk):
@@ -19,23 +18,21 @@ class tia_connect(tk.Tk):
         self.resizable(True, True)
         self.attributes('-topmost', True)
 
-        # Dark theme
         self.configure(bg="#2E2E2E")
         self.option_add('*TButton*highlightBackground', '#2E2E2E')
         self.option_add('*TButton*highlightColor', '#2E2E2E')
         self.option_add('*TButton*highlightThickness', 0)
 
-        # Left frame
+
         leftframe_ = tk.Frame(self, bg="#2E2E2E")
         leftframe_.grid(row=0, column=0, rowspan=2, padx=10, pady=10, sticky="nswe")
-        # Right frame
+
         rightframe_ = tk.Frame(self, bg="#2E2E2E")
         rightframe_.grid(row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nswe")
-        # Bottom frame
+
         bottomframe_ = tk.Frame(self, bg="#2E2E2E")
         bottomframe_.grid(row=2, column=0, columnspan=2, padx=10, pady=0)
 
-        # TIA Version label + entry
         tk.Label(leftframe_, text="TIA Portal Version:", fg="white", bg="#2E2E2E")\
             .grid(row=0, column=0, sticky="w", pady=(0,5))
         self.sv_version_input = tk.StringVar()
@@ -44,14 +41,13 @@ class tia_connect(tk.Tk):
         self.entry_version.grid(row=1, column=0, sticky="ew", pady=(0,10))
         self.sv_version_input.trace('w', self.update_dll_path)
 
-        # Process combobox
+
         tk.Label(leftframe_, text="Select Process:", fg="white", bg="#2E2E2E")\
             .grid(row=2, column=0, sticky="w", pady=(0,5))
         self.sv_cb_Avail_Jobs = tk.StringVar()
         self.cb_Avail_Jobs = ttk.Combobox(leftframe_, textvariable=self.sv_cb_Avail_Jobs)
         self.cb_Avail_Jobs.grid(row=3, column=0, sticky="ew", pady=(0,10))
 
-        # Interval
         tk.Label(leftframe_, text="Save Interval (minutes):", fg="white", bg="#2E2E2E")\
             .grid(row=4, column=0, sticky="w", pady=(0,5))
         self.iv_spn_spinval = tk.IntVar(value=5)
@@ -59,19 +55,16 @@ class tia_connect(tk.Tk):
             leftframe_, from_=1, to=100, increment=1, textvariable=self.iv_spn_spinval)
         self.spn_interval.grid(row=5, column=0, sticky="ew", pady=(0,10))
 
-        # Refresh button (now loads DLL + refreshes)
         self.btn_refresh = tk.Button(
             rightframe_, text="Refresh", bg="#4C4C4C", fg="white",
             command=lambda: (self.update_dll_path(), self.refresh()))
         self.btn_refresh.grid(row=0, column=0, sticky="ew", pady=(0,10))
 
-        # Start/Stop button
         self.btn_Man_Save = tk.Button(
             rightframe_, text="Start Saving", bg="green", fg="white",
             command=self.btn_start_toggle)
         self.btn_Man_Save.grid(row=1, column=0, sticky="ew", pady=(0,10))
 
-        # Progressbar + time-left
         self.pb_time_left = ttk.Progressbar(
             bottomframe_, orient=HORIZONTAL, length=200)
         self.pb_time_left.grid(row=0, column=0, sticky="ew", pady=(0,5))
@@ -80,7 +73,6 @@ class tia_connect(tk.Tk):
             bg="#2E2E2E", fg="white")
         self.lbl_time_left.grid(row=1, column=0, sticky="w")
 
-        # Traces and initial setup
         self.traces()
         self.first_cycle()
         self.after(0, self.parallel_loop)
@@ -158,7 +150,6 @@ class tia_connect(tk.Tk):
                 )
 
     def log_message(self, message):
-        # You removed the log box; this is a no-op or could print
         print(message)
 
     def traces(self):
