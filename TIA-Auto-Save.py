@@ -6,6 +6,7 @@ from datetime import datetime
 from tkinter import HORIZONTAL, ttk
 import os
 
+
 tia = None
 
 class tia_connect(tk.Tk):
@@ -23,10 +24,9 @@ class tia_connect(tk.Tk):
         self.option_add('*TButton*highlightColor', '#2E2E2E')
         self.option_add('*TButton*highlightThickness', 0)
 
-
         leftframe_ = tk.Frame(self, bg="#2E2E2E")
         leftframe_.grid(row=0, column=0, rowspan=2, padx=10, pady=10, sticky="nswe")
-
+        
         rightframe_ = tk.Frame(self, bg="#2E2E2E")
         rightframe_.grid(row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nswe")
 
@@ -41,13 +41,12 @@ class tia_connect(tk.Tk):
         self.entry_version.grid(row=1, column=0, sticky="ew", pady=(0,10))
         self.sv_version_input.trace('w', self.update_dll_path)
 
-
         tk.Label(leftframe_, text="Select Process:", fg="white", bg="#2E2E2E")\
             .grid(row=2, column=0, sticky="w", pady=(0,5))
         self.sv_cb_Avail_Jobs = tk.StringVar()
         self.cb_Avail_Jobs = ttk.Combobox(leftframe_, textvariable=self.sv_cb_Avail_Jobs)
         self.cb_Avail_Jobs.grid(row=3, column=0, sticky="ew", pady=(0,10))
-
+        
         tk.Label(leftframe_, text="Save Interval (minutes):", fg="white", bg="#2E2E2E")\
             .grid(row=4, column=0, sticky="w", pady=(0,5))
         self.iv_spn_spinval = tk.IntVar(value=5)
