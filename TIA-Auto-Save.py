@@ -39,7 +39,6 @@ class tia_connect(tk.Tk):
         self.entry_version = tk.Entry(leftframe_, textvariable=self.sv_version_input)
         self.entry_version.insert(0, "18")
         self.entry_version.grid(row=1, column=0, sticky="ew", pady=(0,10))
-        self.sv_version_input.trace('w', self.update_dll_path)
 
         tk.Label(leftframe_, text="Select Process:", fg="white", bg="#2E2E2E")\
             .grid(row=2, column=0, sticky="w", pady=(0,5))
@@ -79,31 +78,47 @@ class tia_connect(tk.Tk):
     def update_dll_path(self, *args):
         """Load the correct Siemens.Engineering.dll based on version."""
         version = self.sv_version_input.get().strip()
-        if not version:
+        
+        # Only proceed if version is valid (numeric and reasonable length)
+        if not version or not version.isdigit() or len(version) > 3:
             return
+        
         dll_path = os.path.join(
             f"C:\\Program Files\\Siemens\\Automation\\Portal V{version}",
             "PublicAPI",
             f"V{version}",
             "Siemens.Engineering.dll"
         )
+        
+        # Check if DLL exists before trying to load
+        if not os.path.exists(dll_path):
+            return
+        
         try:
             clr.AddReference(dll_path)
             global tia
             import Siemens.Engineering as tia
             self.log_message(f"Loaded DLL: {dll_path}")
         except Exception as e:
-            messagebox.showerror(
-                "DLL Load Failed",
-                f"Could not load TIA API DLL from:\n{dll_path}\n\nError: {e}"
-            )
+            # Only show error if user explicitly clicked Refresh
+            pass
 
     def refresh(self):
         """Only attempt to find processes if TIA module is loaded."""
+        # Try to load DLL first
+        self.update_dll_path()
+        
         if tia is None:
-            messagebox.showwarning(
+            version = self.sv_version_input.get().strip()
+            dll_path = os.path.join(
+                f"C:\\Program Files\\Siemens\\Automation\\Portal V{version}",
+                "PublicAPI",
+                f"V{version}",
+                "Siemens.Engineering.dll"
+            )
+            messagebox.showerror(
                 "TIA Not Loaded",
-                "Please enter your Portal version and click Refresh first."
+                f"Could not load TIA API DLL from:\n{dll_path}\n\nPlease check the version number."
             )
             return
         self.get_processes()
@@ -186,13 +201,19 @@ class tia_connect(tk.Tk):
         self.myproject = self.mytia.Projects[0]
 
     def set_save_interval(self, *args):
-        i = max(1, int(self.iv_spn_spinval.get()))
-        self.iv_spn_spinval.set(i)
-        self.interval_sec = i * 60
-        self.pb_time_left.config(maximum=self.interval_sec)
-        self.pb_time_left['value'] = 0
-        schedule.clear()
-        schedule.every(i).minutes.do(self.save_project)
+        try:
+            val = self.iv_spn_spinval.get()
+            if val == "":
+                return
+            i = max(1, int(val))
+            self.iv_spn_spinval.set(i)
+            self.interval_sec = i * 60
+            self.pb_time_left.config(maximum=self.interval_sec)
+            self.pb_time_left['value'] = 0
+            schedule.clear()
+            schedule.every(i).minutes.do(self.save_project)
+        except (ValueError, tk.TclError):
+            pass
 
 
 if __name__ == "__main__":
